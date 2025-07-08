@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 # Гравітація з глобальних налаштувань
-var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
+var gravity : float = ProjectSettings.get_setting("physics/2d/default_gravity")
 
 # Швидкість пересування ворога
 @export var speed := 100
@@ -9,9 +9,11 @@ var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 # Чи ворог переслідує гравця
 var chase := false
 
+var alive = true
 # Посилання на гравця
 var player: Node2D
 
+@onready var anim = $AnimatedSprite2D
 
 func _ready() -> void:
 	# Знаходимо гравця в дереві сцени
@@ -32,10 +34,18 @@ func _physics_process(delta: float) -> void:
 
 	# Якщо гравець у зоні переслідування — рухаємось до нього
 	if chase:
-		var direction_x = sign(player.position.x - position.x)
+		var direction_x: float = sign(player.position.x - position.x)
 		velocity.x = direction_x * speed
 	else:
 		velocity.x = 0
+
+
+	if alive == true:
+		if  velocity.x != 0:
+			$AnimatedSprite2D.flip_h = velocity.x < 0
+			anim.play("Run")
+		else:
+			anim.play("Idle")
 
 	# Рух ворога
 	move_and_slide()
@@ -51,3 +61,22 @@ func _on_detector_body_entered(body: Node2D) -> void:
 func _on_detector_body_exited(body: Node2D) -> void:
 	if body.name == "Player":
 		chase = false
+
+
+func _on_death_body_entered(body: Node2D) -> void:
+	if body.name == "Player":
+		body.velocity.y -= 200
+		death()
+		
+func death ():
+	alive = false
+	anim.play("Hit")
+	await anim.animation_finished
+	queue_free()
+
+
+func _on_death_2_body_entered(body: Node2D) -> void:
+	if body.name == "Player":
+		if alive == true:
+			body.health -=40
+		death()

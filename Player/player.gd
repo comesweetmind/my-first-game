@@ -10,6 +10,7 @@ const JUMP_VELOCITY = -400
 # гравітація
 const GRAVITY = 1200
 
+var health = 100 
 
 
 func _physics_process(delta):
@@ -41,6 +42,10 @@ func _physics_process(delta):
 		# Додаємо гравітацію
 		velocity.y += GRAVITY * delta
 	
+	if health <= 0:
+		queue_free()
+		get_tree().change_scene_to_file("res://menu.tscn")
+	
 	# Вибір анімації
 	if not is_on_floor():
 		state = "Jump"
@@ -52,7 +57,7 @@ func _physics_process(delta):
 	# Програвання анімації лише при зміні
 	if animated.animation != state:
 		animated.play(state)
-	
+		
 	print(state)
 	# Застосовуємо рух
 	self.velocity = velocity
