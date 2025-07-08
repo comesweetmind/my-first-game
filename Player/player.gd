@@ -11,7 +11,7 @@ const JUMP_VELOCITY = -400
 const GRAVITY = 1200
 
 var health = 100 
-
+var gold = 0
 
 func _physics_process(delta):
 	# Горизонтальний рух (ліва/права)

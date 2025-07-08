@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=4 uid="uid://0d1ws4n3giea"]
+[gd_scene load_steps=14 format=4 uid="uid://0d1ws4n3giea"]
 
 [ext_resource type="PackedScene" uid="uid://u4d730oa3dya" path="res://Player/player.tscn" id="1_u52ul"]
 [ext_resource type="Texture2D" uid="uid://dqf80qcoj503y" path="res://oak_woods_v1.0/background/background_layer_1.png" id="2_0b4ue"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://cw3cusoem3y62" path="res://oak_woods_v1.0/background/background_layer_3.png" id="4_1ainy"]
 [ext_resource type="Texture2D" uid="uid://bg5rg1xpnd35l" path="res://oak_woods_v1.0/oak_woods_tileset.png" id="5_f2txt"]
 [ext_resource type="PackedScene" uid="uid://bvnouo8kd1tyq" path="res://Skeleton/Skeleton.tscn" id="6_1ainy"]
+[ext_resource type="PackedScene" uid="uid://bey0nvaussks3" path="res://Collectibles/gold.tscn" id="7_n6hdu"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_1ainy"]
 texture = ExtResource("5_f2txt")
@@ -440,6 +441,56 @@ func _process(delta: float) -> void:
 	text = \"HP:\" + str($\"../../Player/Player\".health)
 "
 
+[sub_resource type="GDScript" id="GDScript_n6hdu"]
+script/source = "extends Label
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	text = \"Gold:\" + str($\"../../Player/Player\".gold)
+"
+
+[sub_resource type="GDScript" id="GDScript_km5ld"]
+script/source = "extends Node
+
+var gold = preload(\"res://Collectibles/gold.tscn\")
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+
+
+func _on_timer_timeout() -> void:
+	var goldTemp = gold.instantiate()
+	var rng = RandomNumberGenerator.new()
+	var randint = randi_range(50, 500)
+	goldTemp.position = Vector2 (randint,570)
+	add_child(goldTemp)
+"
+
+[sub_resource type="GDScript" id="GDScript_i2t4f"]
+script/source = "extends Timer
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+"
+
 [node name="Level" type="Node2D"]
 
 [node name="BG" type="ParallaxBackground" parent="."]
@@ -494,3 +545,25 @@ offset_bottom = 23.0
 theme_override_font_sizes/font_size = 30
 text = "HP"
 script = SubResource("GDScript_1ainy")
+
+[node name="Label2" type="Label" parent="CanvasLayer"]
+offset_left = 3.0
+offset_top = 45.0
+offset_right = 43.0
+offset_bottom = 68.0
+theme_override_font_sizes/font_size = 25
+text = "Gold"
+script = SubResource("GDScript_n6hdu")
+
+[node name="Collectibles" type="Node" parent="."]
+script = SubResource("GDScript_km5ld")
+
+[node name="Timer" type="Timer" parent="Collectibles"]
+wait_time = 3.111
+autostart = true
+script = SubResource("GDScript_i2t4f")
+
+[node name="Gold" parent="." instance=ExtResource("7_n6hdu")]
+position = Vector2(510, 558)
+
+[connection signal="timeout" from="Collectibles/Timer" to="Collectibles" method="_on_timer_timeout"]
