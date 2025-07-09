@@ -1,71 +1,49 @@
 # player.gd (на CharacterBody2D)
 extends CharacterBody2D
 
-enum {
-	IDLE,
-	MOVE,
-	JUMP
-}
-
 @onready var animated = $AnimatedSprite2D
+@onready var states_container = $States
 
-# швидкість руху
 const SPEED = 200
-# сила стрибка
 const JUMP_VELOCITY = -400
-# гравітація
 const GRAVITY = 1200
+
+var current_state
+var states = {}
 
 var health = 100 
 var gold = 0
 
+
+func _ready():
+	# Підключаємо всі стани
+	for state in states_container.get_children():
+		if state is State:
+			states[state.name] = state
+			state.player = self
+	change_state("IdleState")
+
+
+func change_state(state_name: String):
+	if current_state:
+		current_state.exit()
+	current_state = states.get(state_name)
+	if current_state:
+		current_state.enter()
+
+
 func _physics_process(delta):
-	var state = ""
-	
-	# Горизонтальний рух (ліва/права)
-	var direction = 0
-
-	
-	if Input.is_action_pressed("move_left"):
-		direction -= 1
-	if Input.is_action_pressed("move_right"):
-		direction += 1
-
-	
-	
-	if direction < 0:
-		animated.flip_h = true
-	elif direction > 0:
-		animated.flip_h = false
-	
-	velocity.x = direction * SPEED
-	
-	
-	# Стрибок
-	if is_on_floor():
-		if Input.is_action_just_pressed("jump"):
-			velocity.y = JUMP_VELOCITY
-	else:
-		# Додаємо гравітацію
+	# Гравітація
+	if not is_on_floor():
 		velocity.y += GRAVITY * delta
+	else:
+		velocity.y = 0  # скидаємо вертикальну швидкість на підлозі
+
+	current_state.update(delta)
 	
+	print(current_state)
+	move_and_slide()
+
 	if health <= 0:
 		queue_free()
 		get_tree().change_scene_to_file("res://menu.tscn")
-	
-	# Вибір анімації
-	if not is_on_floor():
-		state = "Jump"
-	elif direction != 0:
-		state = "Run"
-	else:
-		state = "Idle"
-		
-	# Програвання анімації лише при зміні
-	if animated.animation != state:
-		animated.play(state)
-		
-	print(state)
-	# Застосовуємо рух
-	self.velocity = velocity
-	move_and_slide()
