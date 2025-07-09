@@ -1,6 +1,12 @@
 # player.gd (на CharacterBody2D)
 extends CharacterBody2D
 
+enum {
+	IDLE,
+	MOVE,
+	JUMP
+}
+
 @onready var animated = $AnimatedSprite2D
 
 # швидкість руху
@@ -14,9 +20,10 @@ var health = 100
 var gold = 0
 
 func _physics_process(delta):
+	var state = ""
+	
 	# Горизонтальний рух (ліва/права)
 	var direction = 0
-	var state = ""
 
 	
 	if Input.is_action_pressed("move_left"):

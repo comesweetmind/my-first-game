@@ -437,7 +437,7 @@ func _ready() -> void:
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	text = \"HP:\" + str($\"../../Player/Player\".health)
 "
 
@@ -494,6 +494,8 @@ func _process(delta: float) -> void:
 [node name="Level" type="Node2D"]
 
 [node name="BG" type="ParallaxBackground" parent="."]
+scale = Vector2(0.5, 0.5)
+transform = Transform2D(0.5, 0, 0, 0.5, 0, 0)
 metadata/_edit_vertical_guides_ = [1152.0]
 
 [node name="ParallaxLayer" type="ParallaxLayer" parent="BG"]
@@ -506,7 +508,7 @@ scale = Vector2(3.60937, 3.61111)
 texture = ExtResource("2_0b4ue")
 
 [node name="ParallaxLayer2" type="ParallaxLayer" parent="BG"]
-motion_scale = Vector2(0.5, 0.5)
+motion_scale = Vector2(0.3, 0.3)
 motion_mirroring = Vector2(1152, 0)
 
 [node name="BackgroundLayer2" type="Sprite2D" parent="BG/ParallaxLayer2"]
@@ -515,7 +517,7 @@ scale = Vector2(3.66667, 3.66667)
 texture = ExtResource("3_f2txt")
 
 [node name="ParallaxLayer3" type="ParallaxLayer" parent="BG"]
-motion_scale = Vector2(0.8, 0.8)
+motion_scale = Vector2(0.5, 0.5)
 motion_mirroring = Vector2(1152, 0)
 
 [node name="BackgroundLayer3" type="Sprite2D" parent="BG/ParallaxLayer3"]
@@ -530,12 +532,12 @@ tile_set = SubResource("TileSet_n6hdu")
 [node name="Player" type="Node2D" parent="."]
 
 [node name="Player" parent="Player" instance=ExtResource("1_u52ul")]
-position = Vector2(649, 437)
+position = Vector2(251, 561)
 
 [node name="Mobs" type="Node2D" parent="."]
 
 [node name="Skeleton" parent="." instance=ExtResource("6_1ainy")]
-position = Vector2(441, 547)
+position = Vector2(131, 555)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -564,6 +566,6 @@ autostart = true
 script = SubResource("GDScript_i2t4f")
 
 [node name="Gold" parent="." instance=ExtResource("7_n6hdu")]
-position = Vector2(510, 558)
+position = Vector2(337, 548)
 
 [connection signal="timeout" from="Collectibles/Timer" to="Collectibles" method="_on_timer_timeout"]
